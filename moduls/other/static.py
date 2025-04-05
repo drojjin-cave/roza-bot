@@ -2,7 +2,7 @@ main_photo_path = "moduls/pictures/main_2.jpg"
 main_photo_path2 = "moduls/pictures/main.jpg"
 
 main_text="""
-Добро пожаловать в бота проекта проверка2<b>Роза ветров</b>!
+Добро пожаловать в бота проекта <b>Роза ветров</b>!
 
 <blockquote>Здесь ты можешь внести данные участников!
 
