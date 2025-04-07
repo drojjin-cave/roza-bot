@@ -102,7 +102,7 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
     time_user = context_data.get('time')
     id_user = context_data.get('id')
     if call.data == 'изменить_время':
-
+        await call.message.edit_reply_markup(reply_markup=None)
         await call.message.answer(f'<blockquote>Введенное ранее время\n<code><b>{time_user}</b></code></blockquote>\n' +
                                   html.bold('\nВведи время в формате:') + '\n' +
                                   html.blockquote(format_time.replace('Введи время в формате:', "").strip()))
@@ -111,6 +111,7 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
 
         await call.answer()
     elif call.data == 'изменить_номер':
+        await call.message.edit_reply_markup(reply_markup=None)
         await call.message.answer(f'<blockquote>Введенный ранее номер:\n<b>{id_user}</b></blockquote>\n' + '<b>\nВведите номер участника:</b>')
 
         await state.set_state(StepsTimeHand.GET_ONLY_ID)
