@@ -8,3 +8,15 @@ def time_keyboard():
 
     keyboard_builder.adjust(1, 2)
     return keyboard_builder.as_markup()
+
+def start_keyboard():
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text='🏃‍♂️‍➡️ СТАРТ', callback_data='старт')
+
+    return keyboard_builder.as_markup()
+
+def finish_keyboard():
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text='🏁 ФИНИШ', callback_data='финиш')
+
+    return keyboard_builder.as_markup()

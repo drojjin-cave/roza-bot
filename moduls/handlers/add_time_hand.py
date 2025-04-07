@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from moduls.utils.states_form import StepsTimeHand
 from re import match
 from aiogram.exceptions import TelegramBadRequest
-
+import asyncio
 add_time_hand_handlers = Router(name=__name__)
 
 @add_time_hand_handlers.callback_query(F.data == 'ручной')
@@ -120,6 +120,7 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
                      f'<blockquote>ID участника - <b>{id_user}</b>\n'
                      f'Время участника - <b>{time_user}</b></blockquote>\n')
         await call.message.edit_text(text=data_user)
+        await asyncio.sleep(2)
         await call.answer()
         context_data = await state.get_data()
 
