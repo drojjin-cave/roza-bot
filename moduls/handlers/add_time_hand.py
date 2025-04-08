@@ -92,7 +92,7 @@ async def get_only_id(message: Message, state: FSMContext, bot: Bot):
         await message.answer(text)
         await state.set_state(StepsTimeHand.GET_ONLY_ID)
     elif google_sheet_hand.search_user_from_id(message.text, data):
-        text = (f'<b>Такой пользователь уже в базе есть!\n\n'
+        text = (f'<b>Такой пользователь уже есть в базе!\n\n'
                 f'Введите номер повторно:</b>')
 
         await message.answer(text)
@@ -155,20 +155,5 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
         await state.clear()
         await bot.send_photo(call.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
 
-
-
-
-# async def non_check(message: Message, state: FSMContext, bot: Bot):
-#     if message.text:
-#         await message.delete()
-#         context_data = await state.get_data()
-#         id, time = context_data.get('id'), context_data.get('time')
-#         data_user = (f'{notes.strip()}\n'
-#                      f'<b>Подтвердите введенные данные:</b>\n'
-#                      f'<blockquote>ID участника - <b>{id}</b>\n'
-#                      f'Время участника - <b>{time}</b></blockquote>\n')
-#         await bot.edit_message_caption(chat_id=message.chat.id, message_id=mymessage.message_id, caption=data_user,
-#                                        reply_markup=time_keyboard())
-#         await state.set_state(StepsTimeHand.CHECK_DATA)
 
 

@@ -42,7 +42,7 @@ async def get_id(message: Message, state: FSMContext):
 
         await state.set_state(StepsTimeAuto.GET_ID)
     elif google_sheet.search_user_from_id(message.text, data):
-        text = (f'<b>Такой пользователь уже в базе есть!\n\n'
+        text = (f'<b>Такой пользователь уже есть в базе!\n\n'
                 f'Введите номер повторно:</b>')
 
         await message.answer(text)
