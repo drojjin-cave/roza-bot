@@ -1,5 +1,6 @@
 main_photo_path = "moduls/pictures/main_2.jpg"
 main_photo_path2 = "moduls/pictures/main.jpg"
+token_sheet = 'moduls/utils/google_sheet/roza-token.json'
 
 main_text="""
 Добро пожаловать в бота проекта <b>Роза ветров</b>!

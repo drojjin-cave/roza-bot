@@ -4,8 +4,8 @@ import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
 class GoogleSheet:
-    def __init__(self):
-        self.CREDENTIALS_FILE = 'roza-token.json'
+    def __init__(self, token):
+        self.CREDENTIALS_FILE = token
         self. spreadsheet_id = '1bdPGdB6B4HO3Hz5Bs1prAASblSMXZ8DFqq6mh9NwErw'
 
         # Авторизуемся и получаем service — экземпляр доступа к API
@@ -24,7 +24,7 @@ class GoogleSheet:
         else:
             if len(values[0]) == 1:
                 data = sum(values, [])
-                print(data)
+                return data
             else:
                 return values
                 # for row in values:
@@ -62,12 +62,12 @@ class GoogleSheet:
         """Находит все данные по слову по полю"""
         res = []
         for rows in data:
-            if rows[2] == str(user_id):
+            if rows[1] == str(user_id):
                 res.append(rows)
         if res:
             return res
         else:
-            return 'Пользователь не найден'
+            return None
 
     def search_users_from_stage(self, stage, data):
         """Находит все данные по слову по полю"""
@@ -78,21 +78,23 @@ class GoogleSheet:
         if res:
             return res
         else:
-            return 'На этапе никого не было'
+            return res
 
 
+if __name__ == "__main__":
+    token_sheet = 'roza-token.json'
+    google_sheet = GoogleSheet(token_sheet)
+    range_name = 'Данные'
 
-google_sheet = GoogleSheet()
-range_name = 'Тест'
+    #google_sheet.read_data(range_name)
+    google_sheet.write_data(range_name, [['20:04','1', '', '', '15:36:89']])
+    #google_sheet.update_data(range_name, [['обновили', 'ура']])
 
-#google_sheet.read_data(range_name)
-#google_sheet.write_data(range_name, [['Петя', 'asdfasd', 1]])
-#google_sheet.update_data(range_name, [['обновили', 'ура']])
+    # data = google_sheet.read_data(range_name)
+    # dt = google_sheet.search_user_from_id('2', data)
 
-data = google_sheet.read_data(range_name)
-#dt = google_sheet.search_user_from_id(2, data)
-
-dt = google_sheet.search_users_from_stage('УЗЛЫ', data)
-print(len(dt))
-for row in dt:
-    print(row)
+    #dt = google_sheet.search_users_from_stage('УЗЛЫ', data)
+    #print(len(dt))
+    # for el in data:
+    #     print(el)
+    #print(dt)

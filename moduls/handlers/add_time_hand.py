@@ -7,9 +7,13 @@ from moduls.keyboards.time_key import time_keyboard
 from aiogram.fsm.context import FSMContext
 from moduls.utils.states_form import StepsTimeHand
 from re import match
-from aiogram.exceptions import TelegramBadRequest
+from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
 import asyncio
+from datetime import datetime
+from moduls.other.static import token_sheet
+
 add_time_hand_handlers = Router(name=__name__)
+google_sheet_hand = GoogleSheet(token_sheet)
 
 @add_time_hand_handlers.callback_query(F.data == 'ручной')
 async def select_hand_time(call: CallbackQuery, state: FSMContext):
@@ -26,7 +30,7 @@ async def select_hand_time(call: CallbackQuery, state: FSMContext):
 
 @add_time_hand_handlers.message(StepsTimeHand.GET_ID)
 async def get_id(message: Message, state: FSMContext, bot: Bot):
-
+    data = google_sheet_hand.read_data('Данные')
     if not message.text.isdigit():
 
         text = (f'<b>Введен не правильный формат!\n'
@@ -36,11 +40,14 @@ async def get_id(message: Message, state: FSMContext, bot: Bot):
         await message.answer(text)
 
         await state.set_state(StepsTimeHand.GET_ID)
+    elif google_sheet_hand.search_user_from_id(message.text, data):
+        text = (f'<b>Такой пользователь уже в базе есть!\n\n'
+                f'Введите номер повторно:</b>')
+
+        await message.answer(text)
+        await state.set_state(StepsTimeHand.GET_ID)
     else:
         await state.update_data(id=message.text)
-        # await bot.edit_message_caption(chat_id=message.chat.id, message_id=mymessage.message_id,
-        #                                caption=notes.strip() + html.bold('\nВведите время в формате:') + '\n' +
-        #                                        html.blockquote(format_time.replace('Введите время в формате:', "").strip()))
 
         await message.answer(html.bold('\nВведите время в формате:') + '\n' +
                                                html.blockquote(format_time.replace('Введите время в формате:', "").strip()))
@@ -75,11 +82,17 @@ async def get_time(message: Message, state: FSMContext, bot: Bot):
 
 @add_time_hand_handlers.message(StepsTimeHand.GET_ONLY_ID)
 async def get_only_id(message: Message, state: FSMContext, bot: Bot):
-
+    data = google_sheet_hand.read_data('Данные')
 
     if not message.text.isdigit():
         text = (f'<b>Введен не правильный формат!\n'
                 f'Нормер участника должен быть числом!\n\n'
+                f'Введите номер повторно:</b>')
+
+        await message.answer(text)
+        await state.set_state(StepsTimeHand.GET_ONLY_ID)
+    elif google_sheet_hand.search_user_from_id(message.text, data):
+        text = (f'<b>Такой пользователь уже в базе есть!\n\n'
                 f'Введите номер повторно:</b>')
 
         await message.answer(text)
@@ -117,18 +130,27 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
         await state.set_state(StepsTimeHand.GET_ONLY_ID)
         await call.answer()
     elif call.data == 'подтвердить':
-        data_user = (f'<b>Данные успешно занесены!</b>\n'
-                     f'<blockquote>ID участника - <b>{id_user}</b>\n'
-                     f'Время участника - <b>{time_user}</b></blockquote>\n')
-        await call.message.edit_text(text=data_user)
-        await asyncio.sleep(2)
-        await call.answer()
-        context_data = await state.get_data()
+        data = google_sheet_hand.read_data('Данные')
+        time_input = datetime.now().strftime('%H:%M:%S')
+        data_user = [[time_input, id_user, '', '', time_user]]
 
+        if google_sheet_hand.search_user_from_id(id_user, data):
+            await call.message.edit_reply_markup()
+            await call.message.answer('Что-то пошло не так, попробуйте заново 😔')
+            await asyncio.sleep(3)
+        else:
+            google_sheet_hand.write_data('Данные', data_user)
 
-        print(context_data)  # TODO: Здесь данные заносятся в таблицу
-        logging.info(f'Пользователь {call.from_user.username} {call.from_user.id} '
-                     f'занес следующие данные в ручную {context_data}')
+            data_user_text = (f'<b>Данные успешно занесены!</b>\n'
+                         f'<blockquote>ID участника - <b>{id_user}</b>\n'
+                         f'Время участника - <b>{time_user}</b></blockquote>\n')
+            await call.message.edit_text(text=data_user_text)
+            await asyncio.sleep(2)
+            await call.answer()
+            context_data = await state.get_data()
+
+            logging.info(f'Пользователь {call.from_user.username} {call.from_user.id} '
+                         f'занес следующие данные в ручную {data_user}')
 
         await state.clear()
         await bot.send_photo(call.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
@@ -136,17 +158,17 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
 
 
 
-async def non_check(message: Message, state: FSMContext, bot: Bot):
-    if message.text:
-        await message.delete()
-        context_data = await state.get_data()
-        id, time = context_data.get('id'), context_data.get('time')
-        data_user = (f'{notes.strip()}\n'
-                     f'<b>Подтвердите введенные данные:</b>\n'
-                     f'<blockquote>ID участника - <b>{id}</b>\n'
-                     f'Время участника - <b>{time}</b></blockquote>\n')
-        await bot.edit_message_caption(chat_id=message.chat.id, message_id=mymessage.message_id, caption=data_user,
-                                       reply_markup=time_keyboard())
-        await state.set_state(StepsTimeHand.CHECK_DATA)
+# async def non_check(message: Message, state: FSMContext, bot: Bot):
+#     if message.text:
+#         await message.delete()
+#         context_data = await state.get_data()
+#         id, time = context_data.get('id'), context_data.get('time')
+#         data_user = (f'{notes.strip()}\n'
+#                      f'<b>Подтвердите введенные данные:</b>\n'
+#                      f'<blockquote>ID участника - <b>{id}</b>\n'
+#                      f'Время участника - <b>{time}</b></blockquote>\n')
+#         await bot.edit_message_caption(chat_id=message.chat.id, message_id=mymessage.message_id, caption=data_user,
+#                                        reply_markup=time_keyboard())
+#         await state.set_state(StepsTimeHand.CHECK_DATA)
 
 
