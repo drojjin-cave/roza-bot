@@ -63,10 +63,10 @@ async def get_start(call: CallbackQuery, state: FSMContext):
 
     context_data = await state.get_data()
     id = context_data.get('id')
-
+    time_to_message_start = (start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
     await call.message.edit_text(f'<b>⏱️ Засекается время!</b>'
                                  f'<blockquote>Номер участника - <b>{id}</b>\n'
-                                 f'Время старта - <b>{(start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')}</b>\n'
+                                 f'Время старта - <b>{time_to_message_start}</b>\n'
                                  f'Для завершения нажмите кнопку <b>ФИНИШ</b></blockquote>', reply_markup=finish_keyboard())
     await state.set_state(StepsTimeAuto.GET_FINISH)
     await call.answer()
