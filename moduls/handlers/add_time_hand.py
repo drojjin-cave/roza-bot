@@ -9,7 +9,7 @@ from moduls.utils.states_form import StepsTimeHand
 from re import match
 from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from moduls.other.static import token_sheet
 
 add_time_hand_handlers = Router(name=__name__)
@@ -131,7 +131,7 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
         await call.answer()
     elif call.data == 'подтвердить':
         data = google_sheet_hand.read_data('Данные')
-        time_input = datetime.now().strftime('%H:%M:%S')
+        time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
         data_user = [[time_input, id_user, '', '', time_user]]
 
         if google_sheet_hand.search_user_from_id(id_user, data):

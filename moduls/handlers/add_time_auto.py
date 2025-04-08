@@ -9,7 +9,7 @@ from moduls.keyboards.main_keyboard import back_keyboard, user_main_keyboard
 from moduls.keyboards.time_key import start_keyboard, finish_keyboard
 from moduls.utils.states_form import StepsTimeAuto
 from aiogram.fsm.context import FSMContext
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
 
 add_time_auto_handlers = Router(name=__name__)
@@ -58,7 +58,7 @@ async def get_id(message: Message, state: FSMContext):
 
 @add_time_auto_handlers.callback_query(StepsTimeAuto.GET_START)
 async def get_start(call: CallbackQuery, state: FSMContext):
-    start = datetime.now()
+    start = datetime.now(timezone.utc)
     await state.update_data(start=start)
 
     context_data = await state.get_data()
@@ -66,7 +66,7 @@ async def get_start(call: CallbackQuery, state: FSMContext):
 
     await call.message.edit_text(f'<b>⏱️ Засекается время!</b>'
                                  f'<blockquote>Номер участника - <b>{id}</b>\n'
-                                 f'Время старта - <b>{start.strftime("%H:%M:%S")}</b>\n'
+                                 f'Время старта - <b>{(start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')}</b>\n'
                                  f'Для завершения нажмите кнопку <b>ФИНИШ</b></blockquote>', reply_markup=finish_keyboard())
     await state.set_state(StepsTimeAuto.GET_FINISH)
     await call.answer()
@@ -77,11 +77,14 @@ async def get_finish(call: CallbackQuery, state: FSMContext):
     start = context_data.get('start')
     id = context_data.get('id')
 
-    finish = datetime.now()
+    finish = datetime.now(timezone.utc)
     total_time = str((finish-start)).replace('.', ':')[2:10]
 
+    start = (start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+    finish = (finish + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+
     data_from_sheet = google_sheet.read_data('Данные')
-    time_input = datetime.now().strftime('%H:%M:%S')
+    time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
     data = [[time_input, id, '', '', total_time]]
 
     if google_sheet.search_user_from_id(id, data_from_sheet):
@@ -95,8 +98,8 @@ async def get_finish(call: CallbackQuery, state: FSMContext):
 
         data_user = (f'<b>Данные успешно занесены!</b>\n'
                      f'<blockquote>ID участника - <b>{id}</b>\n'
-                     f'Время старта - <b>{start.strftime("%H:%M:%S")}</b>\n'
-                     f'Время финиша - <b>{finish.strftime("%H:%M:%S")}</b>\n'
+                     f'Время старта - <b>{start}</b>\n'
+                     f'Время финиша - <b>{finish}</b>\n'
                      f'Время участника - <b>{total_time}</b></blockquote>\n')
         await call.message.edit_text(text=data_user)
         await asyncio.sleep(2)
