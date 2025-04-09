@@ -24,8 +24,8 @@ async def get_added_users(message: Message, bot: Bot):
         for user in data_referee:
 
             data.append(f'{user["ID"]} {user["Время"]}')
-
-        text_to_send = f"<b>Введенные вами участники:</b>\n<blockquote>{'\n'.join(data)}</blockquote>"
+        data = '\n'.join(data)
+        text_to_send = f"<b>Введенные вами участники:</b>\n<blockquote>{data}</blockquote>"
         await message.answer(text_to_send, reply_markup=stop_view())
     else:
         #await bot.send_message(chat_id=message.chat.id, text='<b>Вы еще не вносили участников!</b>')
