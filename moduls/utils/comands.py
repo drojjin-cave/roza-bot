@@ -6,11 +6,8 @@ async def set_commands(bot: Bot):
             BotCommand(
                 command="start",
                 description='Перезапустить бота'
-            ),
-            BotCommand(
-                command="users",
-                description='Посмотреть добавленных участников'
             )
+
         ]
 
     admin_commands = [
