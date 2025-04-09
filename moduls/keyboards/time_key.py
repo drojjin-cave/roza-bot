@@ -20,3 +20,9 @@ def finish_keyboard():
     keyboard_builder.button(text='🏁 ФИНИШ', callback_data='финиш')
 
     return keyboard_builder.as_markup()
+
+def stop_view():
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text='👀 Завершить просмотр', callback_data='завершить_просмотр')
+
+    return keyboard_builder.as_markup()

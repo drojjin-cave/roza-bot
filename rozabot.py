@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
+from moduls.handlers.add_time_fichi import add_time_fichi_handlers
 from moduls.handlers.basic import basic_handlers
 from moduls.handlers.add_time_hand import add_time_hand_handlers
 from moduls.handlers.add_time_auto import add_time_auto_handlers
@@ -21,6 +22,7 @@ async def main():
     dp.include_routers(basic_handlers,
                        add_time_hand_handlers,
                        add_time_auto_handlers,
+                       add_time_fichi_handlers,
                        other_messages_handlers)
 
     try:

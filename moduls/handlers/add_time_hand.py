@@ -132,8 +132,9 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
     elif call.data == 'подтвердить':
         data = google_sheet_hand.read_data('Данные')
         time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
-        data_user = [[time_input, id_user, '', '', time_user]]
+        refery_id = call.from_user.id
 
+        data_user = [[time_input, id_user, time_user, refery_id]]
         if google_sheet_hand.search_user_from_id(id_user, data):
             await call.message.edit_reply_markup()
             await call.message.answer('Что-то пошло не так, попробуйте заново 😔')
@@ -147,7 +148,6 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
             await call.message.edit_text(text=data_user_text)
             await asyncio.sleep(2)
             await call.answer()
-            context_data = await state.get_data()
 
             logging.info(f'Пользователь {call.from_user.username} {call.from_user.id} '
                          f'занес следующие данные в ручную {data_user}')
