@@ -85,7 +85,10 @@ class GoogleSheet:
         res = []
         for rows in data:
             if str(id) in rows:
-                one_user = {'ID': rows[1], 'Время': rows[2]}
+                if len(rows) == 5:
+                    one_user = {'ID': rows[1], 'Время': rows[2], 'Имя': rows[4]}
+                else:
+                    one_user = {'ID': rows[1], 'Время': rows[2]}
                 res.append(one_user)
         if res:
             return res
@@ -103,7 +106,7 @@ if __name__ == "__main__":
     #google_sheet.update_data(range_name, [['обновили', 'ура']])
 
     data = google_sheet.read_data(range_name)
-    #rint(data)
+    #print(data)
     # dt = google_sheet.search_user_from_id('2', data)
     print(google_sheet.search_referee('504535913', data))
     #dt = google_sheet.search_users_from_stage('УЗЛЫ', data)

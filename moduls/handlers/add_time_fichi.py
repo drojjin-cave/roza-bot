@@ -8,6 +8,7 @@ from moduls.keyboards.main_keyboard import user_main_keyboard
 from moduls.other.static import token_sheet, main_photo_path, main_text
 from moduls.keyboards.time_key import stop_view
 from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
+from moduls.utils.additional import print_table
 
 
 add_time_fichi_handlers = Router(name=__name__)
@@ -19,13 +20,18 @@ async def get_added_users(call: CallbackQuery, bot: Bot):
     all_data = google_sheet_fichi.read_data('Данные')
     data_referee = google_sheet_fichi.search_referee(call.from_user.id, all_data)
     if data_referee:
-        head = '<b>ID</b> <b>Время</b>'
-        data = [head, '---------------']
-        for user in data_referee:
+        head = ['<b>ID</b>','<b>Время</b>', '<b>Имя</b>']
+        width_head = 7
 
-            data.append(f'{user["ID"]} {user["Время"]}')
-        data = '\n'.join(data)
+        data = []
+        for user in data_referee:
+            data.append([user["ID"], user["Время"], user["Имя"]])
+
+        data_format = print_table(data, 6)
+        data_format.insert(0, f'{" " * width_head}'.join(head))
+        data = '\n'.join(data_format)
         text_to_send = f"<b>Введенные вами участники:</b>\n<blockquote>{data}</blockquote>"
+
         await call.message.edit_media(InputMediaPhoto(media=FSInputFile(path=main_photo_path), caption=text_to_send), reply_markup=stop_view())
         #await message.answer(text_to_send, )
     else:
