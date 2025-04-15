@@ -5,7 +5,13 @@ import logging
 
 bot_chat_talk_handlers = Router(name=__name__)
 
-@bot_chat_talk_handlers.message(F.text == 'привет')
+bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot']
+
+@bot_chat_talk_handlers.message(F.text.lower() == 'привет')
 async def echo_handler(message: Message):
     await message.answer(f'Привет {message.from_user.full_name}, чем я могу помочь?')
+
+@bot_chat_talk_handlers.message(F.text.in_(bad_fraze))
+async def del_bad(message: Message):
+    await message.delete()
 
