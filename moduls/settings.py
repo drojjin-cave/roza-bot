@@ -6,7 +6,7 @@ class Bots:
     bot_token: str
     admin_id: int
     admins_vpn: list
-
+    admin_channel: str
 
 @dataclass
 class Settings:
@@ -21,7 +21,8 @@ def get_settings(path: str):
         bots=Bots(
             bot_token=env.str("TOKEN"),
             admin_id=env.int("ADMIN_ID"),
-            admins_vpn=[int(id) for id in env.str("ADMINS_VPN").split()]
+            admins_vpn=[int(id) for id in env.str("ADMINS_VPN").split()],
+            admin_channel=env.str("ADMIN_CHANNEL")
         )
     )
 

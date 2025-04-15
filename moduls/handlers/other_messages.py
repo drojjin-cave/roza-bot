@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.types import Message
 
 import logging
@@ -9,6 +9,8 @@ other_messages_handlers = Router(name=__name__)
 async def command_start_handler(message: Message):
     await message.delete()
     logging.info(f'Пользователь {message.from_user.username} {message.from_user.id} ввел неизвестное сообщение - "{message.text}"')
+
+other_messages_handlers.message.filter(F.chat.type == "private")
 
 
 

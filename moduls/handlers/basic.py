@@ -17,16 +17,7 @@ async def command_start_handler(message: Message, bot: Bot, state: FSMContext):
     await state.clear()
     await bot.send_photo(message.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
 
-
-
-
     logging.info(f'Пользователь {message.from_user.username} {message.from_user.id} нажал кнопку старт')
-
-
-
-@basic_handlers.message(F.text == 'привет')
-async def echo_handler(message: Message):
-    await message.answer(f'Привет {message.from_user.full_name}')
 
 
 @basic_handlers.callback_query(F.data == 'назад')
@@ -35,3 +26,5 @@ async def back(call: CallbackQuery, bot: Bot):
                                   reply_markup=user_main_keyboard())
 
     await call.answer()
+
+basic_handlers.message.filter(F.chat.type == "private")
