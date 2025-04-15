@@ -88,7 +88,7 @@ class GoogleSheet:
                 if len(rows) == 5:
                     one_user = {'ID': rows[1], 'Время': rows[2], 'Имя': rows[4]}
                 else:
-                    one_user = {'ID': rows[1], 'Время': rows[2]}
+                    one_user = {'ID': rows[1], 'Время': rows[2], 'Имя': '<b>Не определено!</b>'}
                 res.append(one_user)
         if res:
             return res
