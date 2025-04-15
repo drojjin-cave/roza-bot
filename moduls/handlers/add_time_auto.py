@@ -31,6 +31,7 @@ async def select_auto_time(call: CallbackQuery, state: FSMContext):
 @add_time_auto_handlers.message(StepsTimeAuto.GET_ID)
 async def get_id(message: Message, state: FSMContext):
     data = google_sheet.read_data('Данные')
+    id_players = google_sheet.read_data('Участники!C2:C')
 
     if not message.text.isdigit():
 
@@ -42,12 +43,17 @@ async def get_id(message: Message, state: FSMContext):
 
         await state.set_state(StepsTimeAuto.GET_ID)
     elif google_sheet.search_user_from_id(message.text, data):
-        text = (f'<b>Такой пользователь уже есть в базе!\n\n'
+        text = (f'<b>Этот пользователь уже занесен в базу данных!\n\n'
                 f'Введите номер повторно:</b>')
 
         await message.answer(text)
         await state.set_state(StepsTimeAuto.GET_ID)
+    elif message.text not in id_players:
+        text = (f'<b>Такой номер участника не зарегистрирован!\n\n'
+                f'Введите номер повторно:</b>')
 
+        await message.answer(text)
+        await state.set_state(StepsTimeAuto.GET_ID)
 
     else:
         await state.update_data(id=message.text)

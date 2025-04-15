@@ -99,7 +99,7 @@ class GoogleSheet:
 if __name__ == "__main__":
     token_sheet = 'roza-token.json'
     google_sheet = GoogleSheet(token_sheet)
-    range_name = 'Данные'
+    range_name = 'Участники!C2:C'
 
     #google_sheet.read_data(range_name)
     #google_sheet.write_data(range_name, [['20:04','1', '', '', '15:36:89']])
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     data = google_sheet.read_data(range_name)
     #print(data)
     # dt = google_sheet.search_user_from_id('2', data)
-    print(google_sheet.search_referee('504535913', data))
+    print(data)
     #dt = google_sheet.search_users_from_stage('УЗЛЫ', data)
     #print(len(dt))
     # for el in data:

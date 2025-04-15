@@ -31,6 +31,7 @@ async def select_hand_time(call: CallbackQuery, state: FSMContext):
 @add_time_hand_handlers.message(StepsTimeHand.GET_ID)
 async def get_id(message: Message, state: FSMContext, bot: Bot):
     data = google_sheet_hand.read_data('Данные')
+    id_players = google_sheet_hand.read_data('Участники!C2:C')
     if not message.text.isdigit():
 
         text = (f'<b>Введен не правильный формат!\n'
@@ -41,7 +42,14 @@ async def get_id(message: Message, state: FSMContext, bot: Bot):
 
         await state.set_state(StepsTimeHand.GET_ID)
     elif google_sheet_hand.search_user_from_id(message.text, data):
-        text = (f'<b>Такой пользователь уже в базе есть!\n\n'
+        text = (f'<b>Этот пользователь уже занесен в базу данных!\n\n'
+                f'Введите номер повторно:</b>')
+
+        await message.answer(text)
+        await state.set_state(StepsTimeHand.GET_ID)
+
+    elif message.text not in id_players:
+        text = (f'<b>Такой номер участника не зарегистрирован!\n\n'
                 f'Введите номер повторно:</b>')
 
         await message.answer(text)
