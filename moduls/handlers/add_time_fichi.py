@@ -12,7 +12,8 @@ from moduls.utils.additional import print_table
 
 
 add_time_fichi_handlers = Router(name=__name__)
-google_sheet_fichi = GoogleSheet(token_sheet)
+id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'  # Весенние старты 2025
+google_sheet_fichi = GoogleSheet(token_sheet, id_table)
 
 @add_time_fichi_handlers.callback_query(F.data == 'просмотр')
 async def get_added_users(call: CallbackQuery, bot: Bot):

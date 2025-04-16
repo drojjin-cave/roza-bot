@@ -13,7 +13,9 @@ from datetime import datetime, timezone, timedelta
 from moduls.other.static import token_sheet
 
 add_time_hand_handlers = Router(name=__name__)
-google_sheet_hand = GoogleSheet(token_sheet)
+
+id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'  # Весенние старты 2025
+google_sheet_hand = GoogleSheet(token_sheet, id_table)
 
 @add_time_hand_handlers.callback_query(F.data == 'ручной')
 async def select_hand_time(call: CallbackQuery, state: FSMContext):

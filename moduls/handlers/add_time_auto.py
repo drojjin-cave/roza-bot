@@ -14,8 +14,8 @@ from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
 
 add_time_auto_handlers = Router(name=__name__)
 
-
-google_sheet = GoogleSheet(token_sheet)
+id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'  # Весенние старты 2025
+google_sheet = GoogleSheet(token_sheet, id_table)
 
 @add_time_auto_handlers.callback_query(F.data == 'автомат')
 async def select_auto_time(call: CallbackQuery, state: FSMContext):

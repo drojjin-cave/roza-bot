@@ -4,9 +4,9 @@ import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
 class GoogleSheet:
-    def __init__(self, token):
+    def __init__(self, token, id_table):
         self.CREDENTIALS_FILE = token
-        self. spreadsheet_id = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'
+        self. spreadsheet_id = id_table
 
         # Авторизуемся и получаем service — экземпляр доступа к API
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
