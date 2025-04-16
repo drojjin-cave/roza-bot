@@ -28,8 +28,8 @@ async def command_start_handler(message: Message, bot: Bot, state: FSMContext):
     if str(message.from_user.id) not in id_users:
 
         data = [[message.from_user.id,
-                 message.from_user.first_name,
                  message.from_user.last_name,
+                 message.from_user.first_name,
                  message.from_user.username,
                  'пользователь']]
 
