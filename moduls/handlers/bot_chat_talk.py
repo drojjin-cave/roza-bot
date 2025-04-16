@@ -10,7 +10,7 @@ from moduls.settings import settings
 bot_chat_talk_handlers = Router(name=__name__)
 ADMIN_CHANNEL = settings.bots.admin_channel
 
-bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot', '/help@test_dev24_bot', '/help@roza_vetrov24_bot']
+bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot', '/help@test_dev24_bot', '/help@roza_vetrov24_bot', '/send_protocol@roza_vetrov24_bot']
 
 @bot_chat_talk_handlers.message(F.text.lower() == 'привет')
 async def echo_handler(message: Message):
