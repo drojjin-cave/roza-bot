@@ -34,7 +34,7 @@ async def command_start_handler(message: Message, bot: Bot, state: FSMContext):
                  'пользователь']]
 
 
-        google_sheet_base.write_data('Пользователи!A2:D', data)
+        google_sheet_base.write_data('Пользователи!A2:E', data)
         logging.info(f'Пользователь {message.from_user.username} {message.from_user.id} занесен в базу данных')
 
 
