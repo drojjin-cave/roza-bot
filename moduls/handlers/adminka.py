@@ -9,7 +9,7 @@ from moduls.settings import settings
 
 
 from datetime import datetime, timedelta, timezone
-ADMINS_VPN = settings.bots.admins_vpn
+ADMINS_ROZA = settings.bots.admins_roza
 ADMIN_CHANNEL = settings.bots.admin_channel
 
 

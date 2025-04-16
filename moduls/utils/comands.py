@@ -1,24 +1,37 @@
 from aiogram import Bot
+from aiogram.types import Message
 from aiogram.types import BotCommand, BotCommandScopeDefault
+from moduls.settings import settings
 
-async def set_commands(bot: Bot):
-    user_commands = [
-            BotCommand(
-                command="start",
-                description='Перезапустить бота'
-            )
+ADMINS_ROZA = settings.bots.admins_roza
 
-        ]
+user_commands = [
+    BotCommand(
+        command="start",
+        description='Перезапустить бота'
+    ),
+    BotCommand(
+        command="help",
+        description='Помощь/сообщить об ошибке'
+    )
+]
 
-    admin_commands = [
-            BotCommand(
-                command="start",
-                description='Перезапустить бота'
-            ),
-            BotCommand(
-                command="logs",
-                description='Логи'
-            )
-        ]
+admin_commands = [
+    BotCommand(
+        command="start",
+        description='Перезапустить бота'
+    ),
+    BotCommand(
+        command="logs",
+        description='Логи'
+    )
+]
 
-    await bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
+
+async def set_commands(bot: Bot, id):
+    if id in ADMINS_ROZA:
+        await bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
+    else:
+        await bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
+
+

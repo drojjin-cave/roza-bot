@@ -22,8 +22,12 @@ mes_start = [None]
 
 @basic_handlers.message(CommandStart())
 async def command_start_handler(message: Message, bot: Bot, state: FSMContext):
-    await set_commands(bot)
+    await set_commands(bot, message.from_user.id)
     await state.clear()
+    try:
+        await bot.edit_message_reply_markup(message_id=mes_start[0].message_id, reply_markup=None, chat_id=message.chat.id)
+    except:
+        pass
 
     mes1 = await bot.send_photo(message.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
     mes_start[0] = mes1
