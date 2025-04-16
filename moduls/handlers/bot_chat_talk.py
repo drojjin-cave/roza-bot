@@ -15,3 +15,4 @@ async def echo_handler(message: Message):
 async def del_bad(message: Message):
     await message.delete()
 
+bot_chat_talk_handlers.message.filter(F.chat.type.in_({"group", "supergroup"}))
