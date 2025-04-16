@@ -17,3 +17,6 @@ class StepsTimeAuto(StatesGroup):
 class Help(StatesGroup):
     GET_HELP = State()
     SEND_HELP_ADMIN = State()
+
+class SendProtocol(StatesGroup):
+    SEND_PROTOCOL = State()

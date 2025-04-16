@@ -14,6 +14,7 @@ from moduls.handlers.bot_chat_talk import bot_chat_talk_handlers
 from moduls.handlers.other_messages import other_messages_handlers
 
 from moduls.settings import settings
+from moduls.handlers.send_protokol import send_protokol_handlers
 
 dp = Dispatcher()
 
@@ -25,6 +26,7 @@ async def main():
                        add_time_hand_handlers,
                        add_time_auto_handlers,
                        add_time_fichi_handlers,
+                       send_protokol_handlers,
                        admin_handlers,
                        bot_chat_talk_handlers,
                        other_messages_handlers)

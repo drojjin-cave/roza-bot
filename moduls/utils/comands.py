@@ -13,7 +13,12 @@ user_commands = [
     BotCommand(
         command="help",
         description='Помощь/сообщить об ошибке'
+    ),
+    BotCommand(
+        command="send_protocol",
+        description='Отправить протокол'
     )
+
 ]
 
 admin_commands = [
