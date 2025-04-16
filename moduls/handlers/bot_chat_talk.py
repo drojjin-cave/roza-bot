@@ -10,7 +10,7 @@ from moduls.settings import settings
 bot_chat_talk_handlers = Router(name=__name__)
 ADMIN_CHANNEL = settings.bots.admin_channel
 
-bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot']
+bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot', '/help@test_dev24_bot', '/help@roza_vetrov24_bot']
 
 @bot_chat_talk_handlers.message(F.text.lower() == 'привет')
 async def echo_handler(message: Message):
@@ -23,7 +23,6 @@ async def del_bad(message: Message):
 
 @bot_chat_talk_handlers.message(F.text.lower().startswith('логи'))
 async def send_logs(message: Message, bot: Bot, n=30):
-    await message.delete()
 
     if message.text.isalpha():
         n = int("-" + str(n))
