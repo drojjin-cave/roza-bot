@@ -12,3 +12,8 @@ class StepsTimeAuto(StatesGroup):
     GET_START = State()
     GET_FINISH = State()
     CHECK_DATA = State()
+
+
+class Help(StatesGroup):
+    GET_HELP = State()
+    SEND_HELP_ADMIN = State()

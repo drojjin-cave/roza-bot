@@ -11,6 +11,7 @@ from moduls.utils.states_form import StepsTimeAuto
 from aiogram.fsm.context import FSMContext
 from datetime import datetime, timedelta, timezone
 from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
+from moduls.handlers.basic import mes_start
 
 add_time_auto_handlers = Router(name=__name__)
 
@@ -78,7 +79,7 @@ async def get_start(call: CallbackQuery, state: FSMContext):
     await call.answer()
 
 @add_time_auto_handlers.callback_query(StepsTimeAuto.GET_FINISH)
-async def get_finish(call: CallbackQuery, state: FSMContext):
+async def get_finish(call: CallbackQuery, state: FSMContext, bot: Bot):
     context_data = await state.get_data()
     start = context_data.get('start')
     id = context_data.get('id')
@@ -112,7 +113,8 @@ async def get_finish(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text(text=data_user)
         await asyncio.sleep(2)
         await call.answer()
-    await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
+
+    mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
 
     await state.clear()
 

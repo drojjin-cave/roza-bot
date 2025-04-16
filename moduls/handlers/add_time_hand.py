@@ -11,6 +11,7 @@ from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
 import asyncio
 from datetime import datetime, timezone, timedelta
 from moduls.other.static import token_sheet
+from moduls.handlers.basic import mes_start
 
 add_time_hand_handlers = Router(name=__name__)
 
@@ -163,7 +164,7 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
                          f'занес следующие данные в ручную {data_user}')
 
         await state.clear()
-        await bot.send_photo(call.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
+        mes_start[0] = await bot.send_photo(call.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
 
 
 
