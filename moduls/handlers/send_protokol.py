@@ -60,6 +60,8 @@ async def help_answer(message: Message, state: FSMContext, bot: Bot):
     await bot.send_photo(chat_id=ADMIN_CHANNEL, photo=message.photo[-1].file_id,
                          caption=text)
 
+    logging.info(f'Пользователь {message.from_user.username} {message.from_user.id} отправил протокол')
+
     text_answer = ('\nПротокол отправлен орг. комитету!\n'
                     'Ты просто космос!👽\n\n'
                    'Через несколько секунд появится главное меню...')
