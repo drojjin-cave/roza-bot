@@ -21,7 +21,7 @@ async def del_bad(message: Message):
     await message.delete()
 
 
-@bot_chat_talk_handlers.message('логи' in F.text.lower())
+@bot_chat_talk_handlers.message(F.text.lower().startswith('логи'))
 async def send_logs(message: Message, bot: Bot, n=30):
     await message.delete()
 
