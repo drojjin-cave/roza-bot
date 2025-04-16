@@ -21,6 +21,7 @@ class GoogleSheet:
         values = result.get('values', [])
         if not values:
             print('No data found.')
+            return values
         else:
             if len(values[0]) == 1:
                 data = sum(values, [])
