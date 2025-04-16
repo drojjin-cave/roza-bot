@@ -30,7 +30,8 @@ async def command_start_handler(message: Message, bot: Bot, state: FSMContext):
         data = [[message.from_user.id,
                  message.from_user.first_name,
                  message.from_user.last_name,
-                 message.from_user.username]]
+                 message.from_user.username,
+                 'пользователь']]
 
 
         google_sheet_base.write_data('Пользователи!A2:D', data)
