@@ -27,8 +27,10 @@ async def send_logs(message: Message, bot: Bot, n=30):
 
     if message.text.isalpha():
         n = int("-" + str(n))
-    else:
+    elif not message.text.isalpha():
         n = int("-" + message.text.split()[1])
+        print(message.text.split())
+        print(n)
     log = r'/home/drojjin/.pm2/logs/tg-roza-error.log'
 
     date_update_info = datetime.now(timezone.utc)
