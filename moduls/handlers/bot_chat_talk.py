@@ -29,12 +29,10 @@ async def send_logs(message: Message, bot: Bot, n=30):
         n = int("-" + str(n))
     elif not message.text.isalpha():
         n = int("-" + message.text.split()[1])
-        print(message.text.split())
-        print(n)
     log = r'/home/drojjin/.pm2/logs/tg-roza-error.log'
 
     date_update_info = datetime.now(timezone.utc)
-    date_update_info = (date_update_info + timedelta(hours=7, minutes=0)).strftime('%d.%m.%Y %H-%M')
+    date_update_info = (date_update_info + timedelta(hours=7, minutes=0)).strftime('%d.%m.%Y %H:%M:%S')
 
     log_out = f'/home/drojjin/projects/logs/roza/logs-roza-send.log'
 
@@ -43,7 +41,8 @@ async def send_logs(message: Message, bot: Bot, n=30):
     with open(log_out, mode='w') as logs_out:
         logs_out.write("".join(logs[-1:n:-1]))
 
-    text = f'Логи от {date_update_info}'
+    text = (f'Последние {str(n)[1:]} строк логов\n'
+            f'Время - <b>{date_update_info}</b>')
 
     await bot.send_document(ADMIN_CHANNEL, document=FSInputFile(path=log_out), caption=text)
 
