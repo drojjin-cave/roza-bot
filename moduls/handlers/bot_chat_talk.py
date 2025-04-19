@@ -45,4 +45,4 @@ async def send_logs(message: Message, bot: Bot, n=30):
 
     await bot.send_document(ADMIN_CHANNEL, document=FSInputFile(path=log_out), caption=text)
 
-#bot_chat_talk_handlers.message.filter(F.chat.type.in_({"group", "supergroup"}))
+bot_chat_talk_handlers.message.filter(F.chat.type.in_({"group", "supergroup"}))
