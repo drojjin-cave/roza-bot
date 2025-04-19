@@ -18,11 +18,27 @@ def start_keyboard():
 def finish_keyboard():
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.button(text='🏁 ФИНИШ', callback_data='финиш')
+    keyboard_builder.button(text='🚫 Превышено КВ', callback_data='КВ')
 
+    keyboard_builder.adjust(1,)
     return keyboard_builder.as_markup()
 
 def stop_view():
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.button(text='🔙 Завершить просмотр', callback_data='завершить_просмотр')
+
+    return keyboard_builder.as_markup()
+
+def confirm_keyboard():
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text='✅ Подтвердить', callback_data='подтвердить_КВ')
+    keyboard_builder.button(text='❌ Отменить', callback_data='отменить_КВ')
+
+    return keyboard_builder.as_markup()
+
+def confirm_finish_keyboard():
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text='✅ Подтвердить', callback_data='подтвердить_финиш')
+    keyboard_builder.button(text='❌ Данные не верны', callback_data='данные не верны')
 
     return keyboard_builder.as_markup()

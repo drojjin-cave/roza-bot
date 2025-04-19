@@ -2,7 +2,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 def user_main_keyboard():
     keyboard_builder = InlineKeyboardBuilder()
-    keyboard_builder.button(text='⌛ Указать СТАРТ/ФИНИШ', callback_data='автомат')
+    keyboard_builder.button(text='⏳ Указать СТАРТ/ФИНИШ', callback_data='автомат')
     keyboard_builder.button(text='📝 Внести данные вручную', callback_data='ручной')
     keyboard_builder.button(text='👀 Посмотреть участников', callback_data='просмотр')
 
