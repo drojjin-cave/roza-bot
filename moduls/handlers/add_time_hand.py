@@ -147,7 +147,7 @@ async def get_chek(call: CallbackQuery, state: FSMContext, bot: Bot):
         await call.answer()
     elif call.data == 'подтвердить':
         data = google_sheet_hand.read_data('Данные')
-        time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+        time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%d.%m.%y %H:%M:%S')
         refery_id = call.from_user.id
 
         data_user = [[time_input, id_user, time_user, refery_id]]

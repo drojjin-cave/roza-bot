@@ -97,7 +97,7 @@ async def get_finish(call: CallbackQuery, state: FSMContext, bot: Bot):
     finish = (finish + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
 
     data_from_sheet = google_sheet.read_data('Данные')
-    time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+    time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%d.%m.%y %H:%M:%S')
     refery_id = call.from_user.id
 
     data = [[time_input, id, total_time, refery_id]]
@@ -175,7 +175,7 @@ async def confirm(call: CallbackQuery, state: FSMContext, bot: Bot):
         total_time = 'превышено КВ'
 
         data_from_sheet = google_sheet.read_data('Данные')
-        time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+        time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%d.%m.%y %H:%M:%S')
         refery_id = call.from_user.id
 
         data = [[time_input, id, total_time, refery_id]]
