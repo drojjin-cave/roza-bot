@@ -69,7 +69,12 @@ async def get_time(message: Message, state: FSMContext, bot: Bot):
 
     pat = r'[0-5][0-9]:[0-5][0-9]:[0-9]?[0-9]?'
 
-    if len(message.text) == 8 and bool(match(pat, message.text)):
+
+    if int(message.text[-2:]) < 10:
+        await message.answer('<b>Введено время менее 10 секунд, такого быть не должно!</b>\n' + html.blockquote(format_time.strip()))
+        await state.set_state(StepsTimeHand.GET_TIME)
+
+    elif len(message.text) == 8 and bool(match(pat, message.text)):
         await state.update_data(time=message.text)
 
         context_data = await state.get_data()
