@@ -32,11 +32,11 @@ def stop_view():
 def confirm_keyboard():
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.button(text='✅ Подтвердить', callback_data='подтвердить_финиш')
+    keyboard_builder.button(text='❌ Ошибка', callback_data='данные не верны')
     keyboard_builder.button(text='🚫 Превышено КВ', callback_data='КВ')
-    keyboard_builder.button(text='❌ Ошибка во времени', callback_data='данные не верны')
 
 
-    keyboard_builder.adjust(1, )
+    keyboard_builder.adjust(2, 1 )
     return keyboard_builder.as_markup()
 
 def confirm_KB_keyboard():

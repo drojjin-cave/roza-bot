@@ -100,12 +100,12 @@ async def get_finish(call: CallbackQuery, state: FSMContext, bot: Bot):
         start = (start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
         finish = (finish + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
 
-        data_user_confirm = (f'<b>Проверьте данные участника и подтвердите!</b>\n'
+        data_user_confirm = (f'<b>Подтвердите данные участника!</b>\n'
                      f'<blockquote>ID участника - <b>{id}</b>\n'
                      f'Время старта - <b>{start}</b>\n'
                      f'Время финиша - <b>{finish}</b>\n'
                      f'Время участника - <b>{total_time}</b></blockquote>\n')
-        await call.message.edit_text(text=data_user_confirm, reply_markup=confirm_keyboard())
+        await call.message.edit_text(text=data_user_confirm + '\n<b>Проверьте, совпадает ли время ☝️ секундомера со временем выше</b>', reply_markup=confirm_keyboard())
         await state.set_state(StepsTimeAuto.CONFIRM)
 
 @add_time_auto_handlers.callback_query(StepsTimeAuto.CONFIRM)
@@ -211,7 +211,7 @@ async def confirm(call: CallbackQuery, state: FSMContext, bot: Bot):
 
     elif call.data == 'отменить_кв':
 
-        await call.message.edit_text(data_user_confirm, reply_markup=confirm_keyboard())
+        await call.message.edit_text(data_user_confirm + '\n<b>Проверьте, совпадает ли время ☝️ секундомера со временем выше</b>', reply_markup=confirm_keyboard())
 
         await state.set_state(StepsTimeAuto.CONFIRM)
 
