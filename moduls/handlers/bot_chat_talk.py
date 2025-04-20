@@ -6,11 +6,16 @@ from aiogram.types import Message, FSInputFile
 import logging
 
 from moduls.settings import settings
+from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
+from moduls.other.static import token_sheet
 
 bot_chat_talk_handlers = Router(name=__name__)
 ADMIN_CHANNEL = settings.bots.admin_channel
 
 bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot', '/help@test_dev24_bot', '/help@roza_vetrov24_bot', '/send_protocol@roza_vetrov24_bot']
+
+id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'
+google_sheet = GoogleSheet(token_sheet, id_table)
 
 @bot_chat_talk_handlers.message(F.text.lower() == 'привет')
 async def echo_handler(message: Message):
@@ -44,5 +49,29 @@ async def send_logs(message: Message, bot: Bot, n=30):
             f'Время - <b>{date_update_info}</b>')
 
     await bot.send_document(ADMIN_CHANNEL, document=FSInputFile(path=log_out), caption=text)
+
+
+@bot_chat_talk_handlers.message(F.text.lower().startswith('инфо'))
+async def send_info(message: Message):
+    mes = message.text
+    mes = mes.split()
+    try:
+        mes = [mes[1].capitalize(), mes[2].capitalize()]
+        mes = ' '.join(mes)
+
+        range_name = 'Данные участников сводка'
+        info = google_sheet.info(range_name, mes)
+
+        text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
+                     f'<blockquote>Общее колчество участников - <b>{info["Колчество участников"]}</b>\n'
+                     f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n'
+                     f'Лучшее время - <b>{info["Лучшее время"]}</b>\n'
+                     f'Худшее время - <b>{info["Худшее время"]}</b>\n'
+                     f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
+
+
+        await message.answer(text_send)
+    except:
+        await message.answer('Не верный запрос')
 
 bot_chat_talk_handlers.message.filter(F.chat.type.in_({"group", "supergroup"}))

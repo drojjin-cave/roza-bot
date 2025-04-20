@@ -11,14 +11,14 @@ from moduls.settings import settings
 from datetime import datetime, timedelta, timezone
 ADMINS_ROZA = settings.bots.admins_roza
 ADMIN_CHANNEL = settings.bots.admin_channel
-
+ADMIN_TEST = '504535913'
 
 admin_handlers = Router(name=__name__)
 
 
 
 @admin_handlers.error()
-async def error_handler(event: ErrorEvent, bot: Bot, message: Message):
+async def error_handler(event: ErrorEvent, bot: Bot):
 
 
     date_update_info = datetime.now(timezone.utc)
@@ -30,11 +30,10 @@ async def error_handler(event: ErrorEvent, bot: Bot, message: Message):
 
 
     logging.error(f'Время ошибки - {date_update_info}\n {error}')
-    logging.info(
-        f'Ошибка! Вызвана пользователем {message.from_user.username} {message.from_user.id}, время ошибки {date_update_info}')
+    # logging.info(
+    #     f'Ошибка! Вызвана пользователем {message.from_user.username} {message.from_user.id}, время ошибки {date_update_info}')
 
     text = (f'Возникла ошибка!\n'
-            f'Пользователь - <b>{message.from_user.username}</b>'
             f'Время - <b>{date_update_info}</b>\n\n'
             f'<b>Ошибка:</b>\n'
             f'<blockquote>{error}</blockquote>'
