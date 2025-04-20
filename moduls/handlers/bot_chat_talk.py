@@ -1,10 +1,9 @@
 from datetime import datetime, timezone, timedelta
 
 from aiogram import Router, F, Bot
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, FSInputFile, CallbackQuery
 
-import logging
-
+from moduls.keyboards.info_key import info_keyboard
 from moduls.settings import settings
 from moduls.utils.google_sheet.GoogleSheet import GoogleSheet
 from moduls.other.static import token_sheet
@@ -13,6 +12,7 @@ bot_chat_talk_handlers = Router(name=__name__)
 ADMIN_CHANNEL = settings.bots.admin_channel
 
 bad_fraze = ['/start@test_dev24_bot', '/start@roza_vetrov24_bot', '/help@test_dev24_bot', '/help@roza_vetrov24_bot', '/send_protocol@roza_vetrov24_bot']
+info_names = ['Категория А', 'Категория В']
 
 id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'
 google_sheet = GoogleSheet(token_sheet, id_table)
@@ -51,14 +51,16 @@ async def send_logs(message: Message, bot: Bot, n=30):
     await bot.send_document(ADMIN_CHANNEL, document=FSInputFile(path=log_out), caption=text)
 
 
-@bot_chat_talk_handlers.message(F.text.lower().startswith('инфо'))
-async def send_info(message: Message):
-    mes = message.text
-    mes = mes.split()
-    try:
-        mes = [mes[1].capitalize(), mes[2].capitalize()]
-        mes = ' '.join(mes)
+@bot_chat_talk_handlers.message(F.text == 'инфо')
+async def get_info(message: Message):
+    await message.answer('<b>Выберите нужную информацию 👇</b>', reply_markup=info_keyboard(info_names))
 
+
+@bot_chat_talk_handlers.callback_query(F.data.in_(info_names))
+async def send_info(call: CallbackQuery):
+    mes = call.data
+
+    try:
         range_name = 'Данные участников сводка'
         info = google_sheet.info(range_name, mes)
 
@@ -69,9 +71,11 @@ async def send_info(message: Message):
                      f'Худшее время - <b>{info["Худшее время"]}</b>\n'
                      f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
 
-
-        await message.answer(text_send)
+        await call.message.edit_text(text_send)
     except:
-        await message.answer('Не верный запрос')
+
+        await call.message.edit_text('Не верный запрос')
+
+    await call.answer()
 
 bot_chat_talk_handlers.message.filter(F.chat.type.in_({"group", "supergroup"}))
