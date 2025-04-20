@@ -72,9 +72,8 @@ async def send_info(call: CallbackQuery):
                      f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
 
         await call.message.edit_text(text_send)
-    except:
-
-        await call.message.edit_text('Не верный запрос')
+    except ValueError:
+        await call.message.edit_text('На этой дистанции участников еще не было')
 
     await call.answer()
 
