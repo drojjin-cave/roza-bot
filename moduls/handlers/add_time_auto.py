@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto
 from moduls.other.static import main_text, main_photo_path, notes, notes_auto, token_sheet
 import logging
 from moduls.keyboards.main_keyboard import back_keyboard, user_main_keyboard
-from moduls.keyboards.time_key import start_keyboard, finish_keyboard, confirm_keyboard, confirm_finish_keyboard
+from moduls.keyboards.time_key import start_keyboard, finish_keyboard, confirm_keyboard, confirm_KB_keyboard
 from moduls.utils.states_form import StepsTimeAuto
 from aiogram.fsm.context import FSMContext
 from datetime import datetime, timedelta, timezone
@@ -19,6 +19,7 @@ id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'  # Весенние с
 google_sheet = GoogleSheet(token_sheet, id_table)
 
 steps_time = ['ФИНИШ', 'КВ']
+data_user_confirm = ''
 
 @add_time_auto_handlers.callback_query(F.data == 'автомат')
 async def select_auto_time(call: CallbackQuery, state: FSMContext):
@@ -80,32 +81,59 @@ async def get_start(call: CallbackQuery, state: FSMContext):
                      f'Для завершения нажмите кнопку <b>ФИНИШ</b></blockquote>')
 
     await call.message.edit_text(mes_start_time, reply_markup=finish_keyboard())
-    await state.set_state(StepsTimeAuto.TIME_MENU)
+    await state.set_state(StepsTimeAuto.GET_FINISH)
     await call.answer()
 
 @add_time_auto_handlers.callback_query(StepsTimeAuto.GET_FINISH)
 async def get_finish(call: CallbackQuery, state: FSMContext, bot: Bot):
+    global data_user_confirm
+    if call.data == 'финиш':
+        finish = datetime.now(timezone.utc)
+        await state.update_data(finish=finish)
 
+        context_data = await state.get_data()
+        start = context_data.get('start')
+        id = context_data.get('id')
+
+        total_time = str((finish-start)).replace('.', ':')[2:10]
+
+        start = (start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+        finish = (finish + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
+
+        data_user_confirm = (f'<b>Проверьте данные участника и подтвердите!</b>\n'
+                     f'<blockquote>ID участника - <b>{id}</b>\n'
+                     f'Время старта - <b>{start}</b>\n'
+                     f'Время финиша - <b>{finish}</b>\n'
+                     f'Время участника - <b>{total_time}</b></blockquote>\n')
+        await call.message.edit_text(text=data_user_confirm, reply_markup=confirm_keyboard())
+        await state.set_state(StepsTimeAuto.CONFIRM)
+
+@add_time_auto_handlers.callback_query(StepsTimeAuto.CONFIRM)
+async def confirm_menu(call: CallbackQuery, state: FSMContext):
     context_data = await state.get_data()
     start = context_data.get('start')
+    finish = context_data.get('finish')
     id = context_data.get('id')
 
-    finish = context_data.get('finish')
-    total_time = str((finish-start)).replace('.', ':')[2:10]
-
+    total_time = str((finish - start)).replace('.', ':')[2:10]
     start = (start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
     finish = (finish + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
 
-    data_from_sheet = google_sheet.read_data('Данные')
     time_input = (datetime.now(timezone.utc) + timedelta(hours=7, minutes=0)).strftime('%d.%m.%y %H:%M:%S')
     refery_id = call.from_user.id
-
     data = [[time_input, id, total_time, refery_id]]
-    if call.data == 'подтвердить_финиш':
+
+    if call.data == 'КВ':
+        await call.message.edit_text(data_user_confirm + '\n<b>Вы выбрали превышение КВ!\n'
+                                                      '👇 Подтвердите ваши действия</b>', reply_markup=confirm_KB_keyboard())
+        await state.set_state(StepsTimeAuto.CONFIRM_KB)
+
+    elif call.data == 'подтвердить_финиш':
+        data_from_sheet = google_sheet.read_data('Данные')
+
         if google_sheet.search_user_from_id(id, data_from_sheet):
             await call.message.edit_reply_markup()
             await call.message.answer('Что-то пошло не так, попробуйте заново 😔')
-            await asyncio.sleep(3)
         else:
             google_sheet.write_data('Данные', data)
             logging.info(f'Пользователь {call.from_user.username} {call.from_user.id} '
@@ -119,56 +147,30 @@ async def get_finish(call: CallbackQuery, state: FSMContext, bot: Bot):
                          f'Через несколько секунд появится главное меню...')
             await call.message.edit_text(text=data_user)
 
+            await asyncio.sleep(5)
+            mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text,
+                                                           reply_markup=user_main_keyboard())
+
+            await state.clear()
+            await call.answer()
+
     elif call.data == 'данные не верны':
         await call.message.edit_reply_markup(None)
-        await call.message.answer('<b>Вы отменили внесение времени!\nВнесите время с секундомера вручную!</b>')
+        await call.message.answer('<b>Вы заметили ошибку!\nВнесение данных приостановлено!\nВнесите время с секундомера вручную!</b>')
         logging.info(f'Пользователь {call.from_user.username} {call.from_user.id} '
                      f'указал, что есть расхождения с секундомером и отменил ввод данных! {data}')
 
+        await asyncio.sleep(5)
+        mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text,
+                                                       reply_markup=user_main_keyboard())
 
-    await asyncio.sleep(3)
-    await call.answer()
-    mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text, reply_markup=user_main_keyboard())
-
-    await state.clear()
-
-
-@add_time_auto_handlers.callback_query(StepsTimeAuto.TIME_MENU)
-async def time_menu(call: CallbackQuery, state: FSMContext):
-    if call.data == 'КВ':
-        await call.message.edit_text(mes_start_time + '\n\n<b>Вы выбрали превышение КВ!\n'
-                                                      '👇 Подтвердите ваши действия</b>', reply_markup=confirm_keyboard())
-        await state.set_state(StepsTimeAuto.CONFIRM_KB)
-
-    elif call.data == 'финиш':
-        finish = datetime.now(timezone.utc)
-
-        context_data = await state.get_data()
-        start = context_data.get('start')
-        id = context_data.get('id')
-
-
-        total_time = str((finish - start)).replace('.', ':')[2:10]
-        await state.update_data(finish=finish)
-
-        start = (start + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
-        finish = (finish + timedelta(hours=7, minutes=0)).strftime('%H:%M:%S')
-
-        data_user = (f'<b>Подтвердите данные!</b>\n'
-                     f'<blockquote>ID участника - <b>{id}</b>\n'
-                     f'Время старта - <b>{start}</b>\n'
-                     f'Время финиша - <b>{finish}</b>\n'
-                     f'Время участника - <b>{total_time}</b></blockquote>\n')
-        await call.message.edit_text(text=data_user, reply_markup=confirm_finish_keyboard())
-        await state.set_state(StepsTimeAuto.GET_FINISH)
-
-
-    await call.answer()
+        await state.clear()
+        await call.answer()
 
 
 @add_time_auto_handlers.callback_query(StepsTimeAuto.CONFIRM_KB)
 async def confirm(call: CallbackQuery, state: FSMContext, bot: Bot):
-    if call.data == 'подтвердить_КВ':
+    if call.data == 'подтвердить_кв':
         context_data = await state.get_data()
 
         id = context_data.get('id')
@@ -184,6 +186,11 @@ async def confirm(call: CallbackQuery, state: FSMContext, bot: Bot):
             await call.message.edit_reply_markup()
             await call.message.answer('Что-то пошло не так, попробуйте заново 😔')
             await asyncio.sleep(3)
+            await call.answer()
+
+            mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text,
+                                                           reply_markup=user_main_keyboard())
+
         else:
             google_sheet.write_data('Данные', data)
             logging.info(f'Пользователь {call.from_user.username} {call.from_user.id} '
@@ -194,20 +201,20 @@ async def confirm(call: CallbackQuery, state: FSMContext, bot: Bot):
                          f'превысил контрольное время!</blockquote>\n\n'
                          f'Через несколько секунд появится главное меню...')
             await call.message.edit_text(text=data_user, reply_markup=None)
-            await asyncio.sleep(2)
+            await asyncio.sleep(4)
             await call.answer()
 
-        mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text,
-                                                       reply_markup=user_main_keyboard())
+            mes_start[0] = await call.message.answer_photo(photo=FSInputFile(path=main_photo_path), caption=main_text,
+                                                           reply_markup=user_main_keyboard())
 
-        await state.clear()
+            await state.clear()
 
-    elif call.data == 'отменить_КВ':
+    elif call.data == 'отменить_кв':
 
-        await call.message.edit_text(mes_start_time, reply_markup=finish_keyboard())
+        await call.message.edit_text(data_user_confirm, reply_markup=confirm_keyboard())
 
-        await state.set_state(StepsTimeAuto.TIME_MENU)
+        await state.set_state(StepsTimeAuto.CONFIRM)
 
-    await call.answer()
+        await call.answer()
 
 
