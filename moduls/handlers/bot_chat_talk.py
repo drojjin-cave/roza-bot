@@ -51,7 +51,7 @@ async def send_logs(message: Message, bot: Bot, n=30):
     await bot.send_document(ADMIN_CHANNEL, document=FSInputFile(path=log_out), caption=text)
 
 
-@bot_chat_talk_handlers.message(F.text == 'инфо')
+@bot_chat_talk_handlers.message(F.text.lower() == 'инфо')
 async def get_info(message: Message):
     await message.answer('<b>Выберите нужную информацию 👇</b>', reply_markup=info_keyboard(info_names))
 
