@@ -86,7 +86,7 @@ class GoogleSheet:
         res = []
         for rows in data:
             if str(id) in rows:
-                if len(rows) == 6:
+                if len(rows) == 7:
                     one_user = {'ID': rows[1], 'Время': rows[2], 'Имя': rows[4]}
                 else:
                     one_user = {'ID': rows[1], 'Время': rows[2], 'Имя': '<b>Не определено!</b>'}
