@@ -60,20 +60,18 @@ async def get_info(message: Message):
 async def send_info(call: CallbackQuery):
     mes = call.data
 
-    try:
-        range_name = 'Данные участников сводка'
-        info = google_sheet.info(range_name, mes)
 
-        text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
-                     f'<blockquote>Общее колчество участников - <b>{info["Колчество участников"]}</b>\n'
-                     f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n'
-                     f'Лучшее время - <b>{info["Лучшее время"]}</b>\n'
-                     f'Худшее время - <b>{info["Худшее время"]}</b>\n'
-                     f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
+    range_name = 'Данные участников сводка'
+    info = google_sheet.info(range_name, mes)
 
-        await call.message.edit_text(text_send)
-    except ValueError:
-        await call.message.edit_text('На этой дистанции участников еще не было')
+    text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
+                 f'<blockquote>Общее колчество участников - <b>{info["Колчество участников"]}</b>\n'
+                 f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n'
+                 f'Лучшее время - <b>{info["Лучшее время"]}</b>\n'
+                 f'Худшее время - <b>{info["Худшее время"]}</b>\n'
+                 f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
+
+    await call.message.edit_text(text_send)
 
     await call.answer()
 
