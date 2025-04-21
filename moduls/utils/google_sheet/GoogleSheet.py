@@ -120,6 +120,7 @@ class GoogleSheet:
             #     print(row)
 
             done_disnatce = [time[time_col] for time in res if time[time_col]]
+            print(done_disnatce)
 
             if done_disnatce:
                 info = {'Колчество участников': len(res),
@@ -137,16 +138,17 @@ if __name__ == "__main__":
     token_sheet = 'roza-token.json'
     id_table = '1zYjSJhbwD_lwWMIYx4h7uJC6YIuWkzlmDzDhWBP1dX4'
     google_sheet = GoogleSheet(token_sheet, id_table)
-    range_name = 'Данные участников сводка'
+    #range_name = 'Данные участников сводка'
 
     #google_sheet.read_data(range_name)
     #google_sheet.write_data(range_name, [['20:04','1', '', '', '15:36:89']])
     #google_sheet.update_data(range_name, [['обновили', 'ура']])
 
-    category = 'Категория А'
+    category = 'Категория В'
 
-
-    google_sheet.info(range_name, category)
+    range_name = 'Данные участников сводка'
+    info = google_sheet.info(range_name, category)
+    print(info)
     #print(data)
     # dt = google_sheet.search_user_from_id('2', data)
 

@@ -63,13 +63,17 @@ async def send_info(call: CallbackQuery):
 
     range_name = 'Данные участников сводка'
     info = google_sheet.info(range_name, mes)
-
-    text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
-                 f'<blockquote>Общее колчество участников - <b>{info["Колчество участников"]}</b>\n'
-                 f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n'
-                 f'Лучшее время - <b>{info["Лучшее время"]}</b>\n'
-                 f'Худшее время - <b>{info["Худшее время"]}</b>\n'
-                 f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
+    if info:
+        text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
+                     f'<blockquote>Общее колчество участников - <b>{info["Колчество участников"]}</b>\n'
+                     f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n'
+                     f'Лучшее время - <b>{info["Лучшее время"]}</b>\n'
+                     f'Худшее время - <b>{info["Худшее время"]}</b>\n'
+                     f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
+    else:
+        text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
+                     f'<blockquote>Общее колчество участников - <b>{info["Колчество участников"]}</b>\n'
+                     f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n')
 
     await call.message.edit_text(text_send)
 
