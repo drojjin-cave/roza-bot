@@ -120,11 +120,16 @@ class GoogleSheet:
             #     print(row)
 
             done_disnatce = [time[time_col] for time in res if time[time_col]]
-            info = {'Колчество участников': len(res),
-                    'Пройдено дистанцию': len(done_disnatce),
-                    'Лучшее время': min(done_disnatce),
-                    'Худшее время': max([time for time in done_disnatce if time != 'прев. КВ']),
-                    'Превышено КВ': len([kv for kv in done_disnatce if kv == 'прев. КВ'])}
+
+            if done_disnatce:
+                info = {'Колчество участников': len(res),
+                        'Пройдено дистанцию': len(done_disnatce),
+                        'Лучшее время': min(done_disnatce),
+                        'Худшее время': max([time for time in done_disnatce if time != 'прев. КВ']),
+                        'Превышено КВ': len([kv for kv in done_disnatce if kv == 'прев. КВ'])}
+            else:
+                info = {'Колчество зарегистрированных участников': len(res),
+                        'Пройдено дистанцию': len(done_disnatce)}
             return info
 
 
