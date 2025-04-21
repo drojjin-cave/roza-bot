@@ -22,6 +22,7 @@ basic_handlers = Router(name=__name__)
 
 mes_start = [None]
 ADMIN_CHANNEL = settings.bots.admin_channel
+ADMIN_TEST = '504535913'
 
 @basic_handlers.message(CommandStart())
 async def command_start_handler(message: Message, bot: Bot, state: FSMContext):
@@ -83,14 +84,28 @@ async def help_answer(message: Message, state: FSMContext, bot: Bot):
     date_update_info = datetime.now(timezone.utc)
     date_update_info = (date_update_info + timedelta(hours=7, minutes=0)).strftime('%d.%m.%Y %H:%M:%S')
 
+    db_bot = google_sheet_base.read_data('Пользователи!A2:G')
+    name_user = None
+    try:
+        for row in db_bot:
+            if str(message.from_user.id) == row[0]:
+                name_user = row[6]
+                break
+    except:
+        name_user = message.from_user.full_name
+
     text = (f'Сообщение от пользователя <b>@{message.from_user.username}</b>\n'
             f'Время - <b>{date_update_info}</b>\n'
-            f'Пользователь - <b>{message.from_user.full_name}</b>\n\n'
-            f'<b>Сообщение:</b>'
-            f'<blockquote>{message.text}</blockquote>'
+            f'Пользователь - <b>{name_user}</b>\n\n'
+            f'<b>Сообщение:</b>\n'
             )
-
-    await bot.send_message(ADMIN_CHANNEL, text=text)
+    if message.photo:
+        if message.caption:
+            await bot.send_photo(chat_id=ADMIN_CHANNEL, photo=message.photo[-1].file_id, caption=text + f'<blockquote>{message.caption}</blockquote>')
+        else:
+            await bot.send_photo(chat_id=ADMIN_CHANNEL, photo=message.photo[-1].file_id, caption=text + f'<blockquote>Фото без текста</blockquote>')
+    else:
+        await bot.send_message(ADMIN_CHANNEL, text=text + f'<blockquote>{message.text}</blockquote>')
 
     text_answer = ('\nИнформация принята, отправлена администраторам и будет обработана в ближайшее время!\n'
                     'Спасибо за информацию!😏\n\n'
@@ -98,6 +113,7 @@ async def help_answer(message: Message, state: FSMContext, bot: Bot):
     await message.reply(text_answer)
     await state.clear()
 
+    logging.info(f'Пользователь {name_user} {message.from_user.id} отправил информацию с помощью раздела /help')
     await asyncio.sleep(5)
     global mes_start
     mes_start[0] = await bot.send_photo(message.from_user.id, photo=FSInputFile(path=main_photo_path), caption=main_text,
