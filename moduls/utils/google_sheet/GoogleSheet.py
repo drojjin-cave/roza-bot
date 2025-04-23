@@ -96,42 +96,6 @@ class GoogleSheet:
         else:
             return res
 
-    def info(self, range, category):
-
-        category = '"А" - опытные до 18 лет' if 'А' in category else \
-            '"В" - начинающие до 18 лет' if 'В' in category else \
-                '"С" - без опыта' if 'С' in category else False
-
-
-        if category:
-
-            data = self.read_data(range)
-            header = data[0]
-            category_col = header.index('Дистанция')
-            time_col = header.index('Время дистанции')
-            res = []
-
-
-            for row in data:
-                if row[0] and row[category_col] == category:
-                    res.append(row)
-            # print(header)
-            # for row in res:
-            #     print(row)
-
-            done_disnatce = [time[time_col] for time in res if time[time_col]]
-
-            if done_disnatce:
-                info = {'Количество участников': len(res),
-                        'Пройдено дистанцию': len(done_disnatce),
-                        'Лучшее время': min(done_disnatce),
-                        'Худшее время': max([time for time in done_disnatce if time != 'прев. КВ']),
-                        'Превышено КВ': len([kv for kv in done_disnatce if kv == 'прев. КВ'])}
-            else:
-                info = {'Количество участников': len(res),
-                        'Пройдено дистанцию': len(done_disnatce)}
-            return info
-
 
 if __name__ == "__main__":
     token_sheet = 'roza-token.json'

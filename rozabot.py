@@ -11,6 +11,7 @@ from moduls.handlers.basic import basic_handlers
 from moduls.handlers.add_time_hand import add_time_hand_handlers
 from moduls.handlers.add_time_auto import add_time_auto_handlers
 from moduls.handlers.bot_chat_talk import bot_chat_talk_handlers
+from moduls.handlers.get_info import info_handlers
 from moduls.handlers.mailing.send_message import mailing_handlers
 from moduls.handlers.other_messages import other_messages_handlers
 
@@ -31,6 +32,7 @@ async def main():
                        admin_handlers,
                        bot_chat_talk_handlers,
                        mailing_handlers,
+                       info_handlers,
                        other_messages_handlers)
 
     try:

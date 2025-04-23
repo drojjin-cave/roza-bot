@@ -51,32 +51,3 @@ async def send_logs(message: Message, bot: Bot, n=30):
     await bot.send_document(ADMIN_CHANNEL, document=FSInputFile(path=log_out), caption=text)
 
 
-@bot_chat_talk_handlers.message(F.text.lower() == 'инфо')
-async def get_info(message: Message):
-    await message.answer('<b>Выберите нужную информацию 👇</b>', reply_markup=info_keyboard(info_names))
-
-
-@bot_chat_talk_handlers.callback_query(F.data.in_(info_names))
-async def send_info(call: CallbackQuery):
-    mes = call.data
-
-
-    range_name = 'Данные участников сводка'
-    info = google_sheet.info(range_name, mes)
-    if len(info) > 2:
-        text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
-                     f'<blockquote>Зарегистрировано участников - <b>{info["Количество участников"]}</b>\n'
-                     f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b>\n'
-                     f'Лучшее время - <b>{info["Лучшее время"]}</b>\n'
-                     f'Худшее время - <b>{info["Худшее время"]}</b>\n'
-                     f'Превысили КВ - <b>{info["Превышено КВ"]}</b></blockquote>')
-    else:
-        text_send = (f'Краткая сводка <b>{mes}:</b>\n\n'
-                     f'<blockquote>Зарегистрировано участников - <b>{info["Количество участников"]}</b>\n'
-                     f'Прошли дистанцию - <b>{info["Пройдено дистанцию"]}</b></blockquote>\n')
-
-    await call.message.edit_text(text_send)
-
-    await call.answer()
-
-bot_chat_talk_handlers.message.filter(F.chat.type.in_({"group", "supergroup"}))

@@ -18,6 +18,22 @@ def print_table(data, width):
     return data_done
 
 
+def print_stat(data_info):
+    data_info = [[el for el in line if el] for line in data_info]
+    data_info_send = []
+
+    for i, line in enumerate(data_info):
+        if len(line) > 1:
+            line[1] = '<b>' + line[1] + '</b>'
+        if i == 0:
+            line[0] = '<blockquote>' + line[0]
+        if i == (len(data_info) - 1):
+            line[len(line) - 1] = line[len(line) - 1] + '</blockquote>'
+        line = ' - '.join(line)
+        data_info_send.append(line)
+    return data_info_send
+
+
 if __name__ == "__main__":
     data = [['<b>ID</b>','<b>Время</b>'],
             ['5', '00:03:88'],
